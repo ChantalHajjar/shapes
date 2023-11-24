@@ -101,45 +101,55 @@ private:
 ostream& operator<<(ostream& os, const Circle& c) {
      return os << c.toString();
  }
-int main(){
-    // Point p1(1.2, 3.4);
-    // Point p2;
-    // Rectangle r1(1.2, 3.4, 10, 20, 30);
-    // Circle c1(1.2, 3.4, 10, 20);
-    // cout << r1 << endl;
-    // cout << r1.surface() << endl;
-    // Shape& s1 = r1;
-    // Shape s2 = c1;
-    // cout << s2.surface() << endl; 
-    // 
-    // Rectangle r1(1,1,1,1,1);
-    // Shape& s1 = r1;
-    // cout << s1.surface() << endl;
-    // Circle c1(1,1,1,1);
-    // Shape* s2 = &c1;
-    // cout << s2->surface() << endl;
-    vector<Shape*> v  = {new Circle(1,1,1,1), new Rectangle(1,1,1,1,1), new Circle(1,2,1,1)};
-    for (const auto& s : v) {
-        cout << *s << endl;
-    }
 
-    vector<Shape*>v2;
-    for (const auto& s : v) {
-        v2.push_back(s->copy());
+class Canvas{
+public:
+Canvas() {}
+~Canvas(){
+    for(auto& s: shapes){
+       delete s;
+       s = nullptr;
+    }   
+} 
+Canvas(const Canvas& c){
+    for(const auto& s: c.shapes){
+        shapes.push_back(s->copy());
     }
-    cout << "Copie" << endl;
-    for (const auto& s : v2) {
+}    
+Canvas& operator=(Canvas c){
+    swap(c, *this);
+    return *this;
+}    
+
+void addShape(const Shape& shape)  {
+    shapes.push_back(shape.copy());
+
+}    
+void display() const{
+    for (const auto& s: shapes){
         cout << *s << endl;
-    }
-         
-    for (auto& s : v){
-      delete s;
-      s = nullptr;
-    }  
-    for (auto& s : v2){
-      delete s;
-      s = nullptr;
-    }  
+}
+}
+private:
+vector<Shape*> shapes;
+friend void swap(Canvas& a, Canvas& b);
+} ;
+void swap(Canvas& a, Canvas& b){
+    using std::swap;
+    swap(a.shapes, b.shapes);
+}    
+int main(){
+    Canvas canvas;
+    Circle c1(1,2,3,4);
+    canvas.addShape(c1);
+    Rectangle r1(1,2,3,4,5);
+    canvas.addShape(r1);
+    cout << "Canvas 1" << endl;
+    canvas.display();
+    Canvas canvas2(canvas);
+    canvas2.display();
+    canvas = canvas2;
+    canvas.display();
     
     return 0;
 }   
