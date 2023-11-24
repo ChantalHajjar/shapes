@@ -27,35 +27,40 @@ ostream& operator<<(ostream& os, const Point& p) {
 class Shape{
 
     public:
-    Shape(double x = 0, double y = 0, double elevation =0):c(x,y), elevation(elevation) {cout << "Shape created" << endl;}
+    Shape(double x = 0, double y = 0, double elevation =0):c(x,y), elevation(elevation) {}
     
-    virtual double surface() const{
-        return -1;
+    double volume() const {
+        return elevation * surface();
     }
-   
-    virtual string toString() const{
+    virtual double surface() const = 0;
+    virtual string toStringSpecial() const = 0;
+    string toString() const{
         stringstream ss;
+        ss << toStringSpecial() << endl;
         ss << "Centre:" << c << " Elevation:" << elevation ;
+        ss << " Surface:" << surface();
+        ss << " Volume:" << volume();
+        ss << endl;
         return ss.str();
     }
     private:
     Point c;
     double elevation;
 };
-// ostream& operator<<(ostream& os, const Shape& s) {
-//     return os << s.toStringS();
-// }
+ostream& operator<<(ostream& os, const Shape& s) {
+    return os << s.toString();
+}
 class Rectangle: public Shape{
 public:
 Rectangle(double x = 0, double y = 0, double elevation = 0, double width = 0, double height = 0):
-Shape(x,y,elevation), width(width), height(height) { cout << "Rectangle created" << endl;}
+Shape(x,y,elevation), width(width), height(height) { }
 
-string toString() const{
+string toStringSpecial() const override {
     stringstream ss;
-    ss << "Rectangle : " << Shape::toString() << " Width:" << width << " Height:" << height << endl;
+    ss << "Rectangle - " << " Width:" << width << " Height:" << height ;
     return ss.str();
 }
-double surface() const{
+double surface() const override{
     return width*height;
 }
 private:
@@ -69,14 +74,14 @@ ostream& operator<<(ostream& os, const Rectangle& r) {
 class Circle: public Shape{
 public:
 Circle(double x = 0, double y = 0, double elevation = 0, double radius = 0):
-Shape(x,y,elevation), radius(radius) { cout << "Circle created" << endl;}
+Shape(x,y,elevation), radius(radius) { }
 
-string toString() const{
+string toStringSpecial() const override{
     stringstream ss;
-    ss << "Cercle : " << Shape::toString() << " Radius:" << radius<< endl;
+    ss << "Cercle - " <<" Radius:" << radius;
     return ss.str();
 }
-double surface() const{
+double surface() const override{
     return PI*radius*radius;
 }
 private:
@@ -97,15 +102,15 @@ int main(){
     // Shape s2 = c1;
     // cout << s2.surface() << endl; 
     // 
-    Rectangle r1(1,1,1,1,1);
-    Shape& s1 = r1;
-    cout << s1.surface() << endl;
-    Circle c1(1,1,1,1);
-    Shape* s2 = &c1;
-    cout << s2->surface() << endl;
+    // Rectangle r1(1,1,1,1,1);
+    // Shape& s1 = r1;
+    // cout << s1.surface() << endl;
+    // Circle c1(1,1,1,1);
+    // Shape* s2 = &c1;
+    // cout << s2->surface() << endl;
     vector<Shape*> v  = {new Circle(1,1,1,1), new Rectangle(1,1,1,1,1), new Circle(1,2,1,1)};
     for (const auto& s : v) {
-        cout << s->toString() << "Surface :" << (*s).surface() << endl;
+        cout << *s << endl;
     }
     return 0;
 }   
