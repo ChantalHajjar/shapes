@@ -33,7 +33,7 @@ class Shape{
         return elevation * surface();
     }
     virtual double surface() const = 0;
-    virtual string toStringSpecial() const = 0;
+   
     string toString() const{
         stringstream ss;
         ss << toStringSpecial() << endl;
@@ -43,6 +43,10 @@ class Shape{
         ss << endl;
         return ss.str();
     }
+    virtual Shape* copy() const = 0;
+
+    protected:
+    virtual string toStringSpecial() const = 0;
     private:
     Point c;
     double elevation;
@@ -63,6 +67,9 @@ string toStringSpecial() const override {
 double surface() const override{
     return width*height;
 }
+Shape* copy() const override{
+    return new Rectangle(*this);
+}    
 private:
     double width;
     double height;
@@ -84,6 +91,9 @@ string toStringSpecial() const override{
 double surface() const override{
     return PI*radius*radius;
 }
+Shape* copy() const override{
+    return new Circle(*this);
+}   
 private:
     double radius;
     
@@ -112,6 +122,25 @@ int main(){
     for (const auto& s : v) {
         cout << *s << endl;
     }
+
+    vector<Shape*>v2;
+    for (const auto& s : v) {
+        v2.push_back(s->copy());
+    }
+    cout << "Copie" << endl;
+    for (const auto& s : v2) {
+        cout << *s << endl;
+    }
+         
+    for (auto& s : v){
+      delete s;
+      s = nullptr;
+    }  
+    for (auto& s : v2){
+      delete s;
+      s = nullptr;
+    }  
+    
     return 0;
 }   
 
